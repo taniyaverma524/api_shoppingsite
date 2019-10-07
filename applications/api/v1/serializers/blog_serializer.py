@@ -1,15 +1,15 @@
 from rest_framework import serializers
-from rest_framework.serializers import HyperlinkedIdentityField,SerializerMethodField
+from rest_framework.serializers import HyperlinkedIdentityField, SerializerMethodField
 from apps.blogs.models import Blog, Comment
 
 blog_detail_url = HyperlinkedIdentityField(
     view_name='blog-api:detail',
     lookup_field='slug'
-    )
+)
+
 
 class PostCreateUpdateSerializer(serializers.ModelSerializer):
-
-    class Meta :
+    class Meta:
         model = Blog
         fields = [
             # 'id',
@@ -22,13 +22,14 @@ class PostCreateUpdateSerializer(serializers.ModelSerializer):
 
 
 class PostListSerializer(serializers.ModelSerializer):
-    url=blog_detail_url
+    url = blog_detail_url
     delete_url = HyperlinkedIdentityField(
         view_name='blog-api:delete',
         lookup_field='slug'
     )
-    user=SerializerMethodField()
-    class Meta :
+    user = SerializerMethodField()
+
+    class Meta:
         model = Blog
         fields = [
             'title',
@@ -40,14 +41,17 @@ class PostListSerializer(serializers.ModelSerializer):
             'user',
             'delete_url',
         ]
-    def get_user(self,obj):
+
+    def get_user(self, obj):
         return str(obj.user.username)
 
+
 class PostDetailSerializer(serializers.ModelSerializer):
-    url=blog_detail_url
-    user= SerializerMethodField()
+    url = blog_detail_url
+    user = SerializerMethodField()
+
     # markdown = SerializerMethodField()
-    class Meta :
+    class Meta:
         model = Blog
         fields = [
             'id',
@@ -58,16 +62,17 @@ class PostDetailSerializer(serializers.ModelSerializer):
             'url',
             'image',
         ]
-    def get_user(self,obj):
+
+    def get_user(self, obj):
         return str(obj.user.username)
     # def get_markdown(self,obj):
     #     pass
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    class Meta :
-        model=Comment
-        fields=[
+    class Meta:
+        model = Comment
+        fields = [
             'blog',
             'comment',
             'name',
@@ -76,20 +81,22 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class CommentChildSerializer(serializers.ModelSerializer):
-    class Meta :
-        model=Comment
-        fields=[
+    class Meta:
+        model = Comment
+        fields = [
             'id',
             'comment',
             'name',
             'email',
         ]
 
+
 class CommentDetailSerializer(serializers.ModelSerializer):
-    replies=SerializerMethodField()
-    class Meta :
-        model=Comment
-        fields=[
+    replies = SerializerMethodField()
+
+    class Meta:
+        model = Comment
+        fields = [
             'id',
             'blog',
             'comment',
@@ -97,9 +104,8 @@ class CommentDetailSerializer(serializers.ModelSerializer):
             'email',
             'replies',
         ]
-    def get_replies(self,obj):
+
+    def get_replies(self, obj):
         if obj.is_parent:
-            return CommentChildSerializer(obj.childrend(),many=True).data
+            return CommentChildSerializer(obj.childrend(), many=True).data
         return None
-
-
