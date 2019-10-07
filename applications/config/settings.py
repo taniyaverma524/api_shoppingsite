@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'apps.myshop.apps.MyshopConfig',
     'apps.users.apps.UsersConfig',
     'api.v1.apps.V1Config',
-    'rest_framework.authtoken',
     'apps.blogs.apps.BlogsConfig',
 
 
@@ -72,9 +71,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
 ROOT_URLCONF = 'config.urls'
-
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
@@ -91,9 +88,11 @@ TEMPLATES = [
     },
 ]
 
+
+
+
+
 WSGI_APPLICATION = 'config.wsgi.application'
-
-
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 

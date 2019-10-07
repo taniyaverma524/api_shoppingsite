@@ -6,7 +6,6 @@ from utils import make_dir ,image_upload_handler
 
 
 
-
 class BlogCategoryForm(forms.ModelForm):
 
     select_image = forms.FileField(required=False)
@@ -16,6 +15,7 @@ class BlogCategoryForm(forms.ModelForm):
     class Meta:
         model = Blog
         fields = "__all__"
+
     def save(self, commit=True):
         extra_field = self.cleaned_data.get('select_image', None)
         if extra_field:
@@ -31,3 +31,4 @@ class BlogCategoryForm(forms.ModelForm):
 
 
         return super(BlogCategoryForm, self).save(commit=commit)
+

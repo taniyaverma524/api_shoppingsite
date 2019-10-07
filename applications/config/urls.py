@@ -29,5 +29,5 @@ urlpatterns = [
     path('api-auth/', include('rest_framework.urls')),
     path('api/token/',TokenObtainPairView.as_view()),
     path('api/token/refresh/',TokenRefreshView.as_view()),
-    path('api/',include(api_url)),
+    path('api/',include(api_url,namespace='blog-api')),
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
