@@ -83,6 +83,6 @@ class UserProfileChangeSerializer(serializers.ModelSerializer):
         instance.gender = validated_data.get('gender', instance.gender)
         instance.is_email_verified = validated_data.get('is_email_verified', instance.is_email_verified)
         instance.save()
-        print(instance.gender)
+        # print(instance.gender)
         return instance
 

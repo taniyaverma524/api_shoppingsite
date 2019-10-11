@@ -40,6 +40,7 @@ class  Blog(models.Model):
         unique_together =( 'title' , 'user' )
 
 class Comment(models.Model):
+    id=models.IntegerField(primary_key=True,unique=True)
     blog = models.ForeignKey(Blog, on_delete=models.CASCADE, related_name='comment')
     comment = models.CharField(max_length=512)
     name=models.CharField(max_length=50)

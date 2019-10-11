@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from rest_framework.serializers import HyperlinkedIdentityField, SerializerMethodField
 from apps.blogs.models import Blog, Comment
+from django.forms.models import model_to_dict
+
 
 blog_detail_url = HyperlinkedIdentityField(
     view_name='blog-api:detail',
@@ -69,30 +71,25 @@ class PostDetailSerializer(serializers.ModelSerializer):
     #     pass
 
 
+comment_url = HyperlinkedIdentityField(
+    view_name='blog-api:comment_detail',
+    lookup_field='id'
+)
+
 class CommentSerializer(serializers.ModelSerializer):
+    details_url = comment_url
     class Meta:
         model = Comment
         fields = [
             'blog',
-            'comment',
-            'name',
-            'email',
-        ]
-
-
-class CommentChildSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Comment
-        fields = [
             'id',
             'comment',
             'name',
             'email',
+            'details_url',
         ]
-
 
 class CommentDetailSerializer(serializers.ModelSerializer):
-    replies = SerializerMethodField()
 
     class Meta:
         model = Comment
@@ -102,10 +99,34 @@ class CommentDetailSerializer(serializers.ModelSerializer):
             'comment',
             'name',
             'email',
-            'replies',
+
         ]
 
-    def get_replies(self, obj):
-        if obj.is_parent:
-            return CommentChildSerializer(obj.childrend(), many=True).data
-        return None
+class BlogCommentSerializer(serializers.ModelSerializer):
+    comment=SerializerMethodField()
+    class Meta:
+        model = Blog
+        # fields = "__all__"
+        fields =[
+            'id',
+            'title',
+            'body',
+            'name',
+            'comment',
+        ]
+    def get_comment(self,obj):
+
+        set_=[]
+        blog_objects=Comment.objects.filter(blog=obj)
+        for i in blog_objects:
+            # details_url = HyperlinkedIdentityField(
+            #     view_name='blog-api:comment_detail',
+            #     lookup_field='i.id'
+            # )
+            set_.append({'comment':i.comment,'email':i.email,
+                         # 'url':model_to_dict(details_url)
+                         })
+        # comments=CommentSerializer(blog_objects,many=True).data
+        # print(comments)
+        return set_
+        # return 0
