@@ -125,7 +125,7 @@ class UserLogout(APIView):
     Get:`
     API for user logout.
     """
-    permission_classes = (permissions.IsAuthenticated,)
+    # permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
         print(request.user,'first')

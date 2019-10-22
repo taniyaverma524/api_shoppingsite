@@ -2,6 +2,7 @@ from django.db.models import Q
 from rest_framework.filters import (
     SearchFilter, OrderingFilter,
 )
+from django.shortcuts import  redirect
 from django.http import Http404
 from rest_framework.views import APIView
 from api.v1.paginations import PostLimitOffsetPagination, PostPageNumberPagination
@@ -16,7 +17,7 @@ from apps.blogs.models import Blog, Comment
 from api.v1.serializers.blog_serializer import (
     PostDetailSerializer, PostListSerializer,
     PostCreateUpdateSerializer, CommentSerializer
-, BlogCommentSerializer,
+, BlogCommentSerializer,CommentCreateSerializer,
     CommentDetailSerializer)
 from rest_framework.permissions import (
     AllowAny, IsAuthenticated, IsAdminUser,
@@ -37,6 +38,7 @@ class PostCreateAPIView(CreateAPIView):
 class PostDetailAPIView(RetrieveAPIView):
     queryset = Blog.objects.all()
     serializer_class = PostDetailSerializer
+
     lookup_field = 'slug'
 
 
@@ -111,10 +113,46 @@ class BlogCommentApiView(APIView):
             return Http404
     def get(self,request,id,format=None):
         blog_object=self.get_object(id)
-        blog_serializer=BlogCommentSerializer(blog_object)
+        blog_serializer=BlogCommentSerializer(blog_object,context={'request': request})
         return Response(blog_serializer.data)
 
 
 
 
 
+class CommentCreateApiView(APIView):
+    print()
+    def get_object(self,slug):
+        try:
+            return Blog.objects.get(slug=slug)
+        except :
+            return Http404
+    def get(self,request,slug,format=None):
+        queryset=self.get_object(slug)
+        blog_serializer=BlogCommentSerializer(queryset,context={'request': request})
+        return Response(blog_serializer.data)
+
+    def post(self , request, slug, format=None):
+        queryset = self.get_object(slug)
+        request.data['email']=request.user.email
+        request.data['name'] = request.user.username
+        request.data['blog'] = queryset.id
+        print(slug,'ooooooooooooooooooooooo',request.data)
+        comment_serializer=CommentCreateSerializer(data=request.data)
+        if comment_serializer.is_valid():
+            comment=comment_serializer.save()
+            if comment :
+                return redirect("/api/comment_create/" + slug + "/")
+            else:
+                print("comment not found")
+        else:
+            print(comment_serializer.errors)
+
+
+
+
+"""
+{
+"comment" : "hye there"
+}
+"""

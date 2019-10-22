@@ -81,8 +81,6 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = [
-            'blog',
-            'id',
             'comment',
             'name',
             'email',
@@ -116,17 +114,25 @@ class BlogCommentSerializer(serializers.ModelSerializer):
         ]
     def get_comment(self,obj):
 
-        set_=[]
+        # set_=[]
         blog_objects=Comment.objects.filter(blog=obj)
-        for i in blog_objects:
-            # details_url = HyperlinkedIdentityField(
-            #     view_name='blog-api:comment_detail',
-            #     lookup_field='i.id'
-            # )
-            set_.append({'comment':i.comment,'email':i.email,
-                         # 'url':model_to_dict(details_url)
-                         })
-        # comments=CommentSerializer(blog_objects,many=True).data
-        # print(comments)
-        return set_
+        # for i in blog_objects:
+        #     # details_url = HyperlinkedIdentityField(
+        #     #     view_name='blog-api:comment_detail',
+        #     #     lookup_field='i.id'
+        #     # )
+        #     set_.append({'comment':i.comment,'email':i.email,
+        #                  # 'url':model_to_dict(details_url)
+        #                  })
+        comments=CommentSerializer(blog_objects,many=True,context={'request': self.context.get('request', None)}).data
+        return comments
         # return 0
+
+
+class CommentCreateSerializer(serializers.ModelSerializer):
+    print("helllooo")
+    class Meta:
+        model = Comment
+        # fields=['comment']
+
+        fields="__all__"
