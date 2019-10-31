@@ -26,8 +26,8 @@ class UserCreateSerializer(serializers.Serializer):
     def validate(self, data):
         if data['password'] != data['confirm_password']:
             raise serializers.ValidationError("password and confirm password does not match")
-        if 'device_type' not in data:
-            data['device_type'] = 'website'
+        # if 'device_type' not in data:
+        #     data['device_type'] = 'website'
         data.pop('confirm_password')
         return data
 
